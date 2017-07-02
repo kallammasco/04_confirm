@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <title>Do Something 1 - PhoneGap Demo</title>
+
+    <link rel="stylesheet" href="screen.css" type="text/css" media="screen" title="no title" charset="utf-8">
+
+    <script src="phonegap.js"></script>
+    <script type="text/javascript" charset="utf-8">
+
+        window.onload = function () {
+            var myButton = document.getElementById('myButton');
+            myButton.addEventListener('click', doSomething);
+        };
+
+        function doSomething(e) {
+            e.preventDefault();
+            var alertMessage = 'تمت التجربة بنجاح - الحمدلله';
+            var alertTitle = 'تمام';
+            var alertButton = 'تم عمل التجربة';
+            var alertCallback = function () {
+                console.log('تم رفض التنبيه المحلي');
+
+                var confMessage = 'Wanna take it back?';
+                var confTitle = 'Last Chance!';
+                var confButton = 'Yep,Nope';
+                var confCallback = function (buttonNumber) {
+                    console.log('native confirmation was dismissed, button number was: ' + buttonNumber);
+                    /*
+                    NOTE: Buttons are 1-based starting from left.
+                    NOTE: Android accepts up to 3 buttons.
+                    NOTE: Some platforms ignore button param and display "Cancel" and "OK"
+                    MORE INFO: http://plugins.cordova.io/#/package/org.apache.cordova.dialogs
+                    */
+                };
+
+                try{
+                    navigator.notification.confirm(confMessage, confCallback, confTitle, confButton);
+                    console.log('native confirmation was used');
+                }catch(error){
+                    alert(alertMessage);
+                    var result = confirm(confMessage);
+                    console.log('javascript confirmation was used, result was: ' + result);
+                }
+
+            };
+
+
+            try{
+                navigator.notification.alert(alertMessage, alertCallback, alertTitle, alertButton);
+                console.log('تم استخدام تنبيه جافا سكريبت');
+            }catch(error){
+                alert(alertMessage);
+                console.log('تم استخدام تنبيه جافا سكريبت');
+            }
+
+            try{
+                navigator.vibrate(300); // Milliseconds
+                console.log('تم استخدام الاهتزاز');
+            }catch (error){
+                console.log('الإهتزاز غير متوفر');
+            }
+
+            try{
+                navigator.notification.beep(2); // Times
+                console.log('تم استخدام الرنين');
+                /*
+                NOTE: Some platforms require "beep.wav" file to be included in project
+                More info: http://plugins.cordova.io/#/package/org.apache.cordova.dialogs
+                 */
+            }catch (error){
+                console.log('الرنين غير متوفر');
+            }
+
+        }
+
+    </script>
+
+</head>
+<body>
+    <p><a href="#" class="button" id="myButton">قم بالضغط هنا لظهور الرسالة !</a></p>
+    <p>
+        <small><em>Pure web app, no API access</em></small>
+    </p>
+</body>
+</html>
